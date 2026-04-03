@@ -20,12 +20,13 @@ DocuIntel AI is a full-stack application that enables users to upload documents 
 
 🏗️ Project Structure
 
-docuintel-ai/
-│
-├── frontend/        # Angular UI
-├── backend/         # FastAPI backend
-├── README.md
-└── .gitignore
+frontend/        # Angular UI
+
+backend/         # FastAPI backend
+
+README.md
+
+gitignore
 
 ---
 
@@ -46,7 +47,23 @@ Backend
 ---
 
 📸 Screenshots
-<img width="1896" height="992" alt="image" src="https://github.com/user-attachments/assets/df81c6ff-1343-49bc-8423-edfcc9cfe2b3" />
+UI:
+<img width="950" height="494" alt="image" src="https://github.com/user-attachments/assets/02047218-6291-4cfc-a460-bc45d8bfcb58" />
+
+Upload Document:
+<img width="953" height="497" alt="image" src="https://github.com/user-attachments/assets/30e07f17-abe3-4830-a90f-006e6ee8a498" />
+
+Classification and Extraction done:
+<img width="950" height="496" alt="image" src="https://github.com/user-attachments/assets/3a8d0266-7041-4b6b-98aa-eb6b6928ba79" />
+
+Chat-Bot:
+<img width="952" height="493" alt="image" src="https://github.com/user-attachments/assets/06305a98-b9e3-43b1-8b7b-32f43a2733ec" />
+
+API Endpoint for external tool:
+<img width="950" height="493" alt="image" src="https://github.com/user-attachments/assets/3381d736-06ef-4f42-a8c3-c1b4a93d1c60" />
+
+
+
 
 
 
