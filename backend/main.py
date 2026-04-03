@@ -150,7 +150,7 @@ async def upload_pdf(file: UploadFile = File(...)):
 # Extraction API: extract info for given session using per-type prompt
 from fastapi import HTTPException
 
-@app.post("/extract-data", response_model=ExtractionResponse)
+@app.post("/api/v1/extract", response_model=ExtractionResponse)
 async def extract_data(req: ExtractionRequest):
 
     session_id = req.session_id or "current_session_id_placeholder"

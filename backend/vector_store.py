@@ -131,7 +131,8 @@ Be strictly factual and cite the facts from the document text below:
 User question:
 {query}
 
-If the answer is not clearly in the document context, reply: "Not available in the document."
+If the answer is not clearly in the document context, reply: "Not available in the document." and suggest Qeustions that can be asked based on the document
+
 """
     completion = client_openai.chat.completions.create(
         model="gpt-4o",

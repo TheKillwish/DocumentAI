@@ -30,6 +30,11 @@ export class App {
   copiedResponse = signal(false);
   copiedRequest = signal(false);
   copiedEndpoint = signal(false);
+  isLoading = signal(false);
+  isUploading = signal(false);     // upload in progress
+  isExtracting = signal(false);    // after sessionId, before extract done
+  isDragging = signal(false);
+  isThinking = signal(false);
   entries = computed(() => {
   const data = this.extractedData();
   if (!data) return [];
@@ -37,6 +42,7 @@ export class App {
 });
 
   @ViewChild('fileInput') fileInput?: ElementRef<HTMLInputElement>;
+  @ViewChild('chatContainer') chatContainer?: ElementRef;
 
   constructor(private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef) {}
 
@@ -65,7 +71,7 @@ export class App {
     input.value = '';
 
     // 🔥 CALL BACKEND UPLOAD API
-    await this.uploadPdf(file);
+    this.handleFile(file);
   }
 
   selectedFileUrl(): SafeResourceUrl | null {
@@ -75,38 +81,40 @@ export class App {
   // ---------------- API CALLS ----------------
 
   async uploadPdf(file: File) {
-    const formData = new FormData();
-    formData.append('file', file);
+  this.isLoading.set(true);   // ✅ START LOADER
+  this.resetChat();
 
-    try {
-      const res: any = await fetch('http://127.0.0.1:8000/upload-pdf', {
-        method: 'POST',
-        body: formData
-      });
+  const formData = new FormData();
+  formData.append('file', file);
 
-      const data = await res.json();
+  try {
+    const res: any = await fetch('http://127.0.0.1:8000/upload-pdf', {
+      method: 'POST',
+      body: formData
+    });
 
-      console.log('UPLOAD RESPONSE:', data);
+    const data = await res.json();
 
-      // ✅ Save session
-      this.sessionId.set(data.session_id);
+    this.sessionId.set(data.session_id);
+    this.classification.set(data.classification_result);
+    this.isUploading.set(false);
+    this.isExtracting.set(true);
+    this.isLoading.set(false);
 
-      // ✅ Save classification
-      this.classification.set(data.classification_result);
+    await this.extractData();
 
-      // 🔥 AUTO CALL EXTRACT
-      await new Promise(res => setTimeout(res, 1000));
-      await this.extractData();
-
-    } catch (err) {
-      console.error('Upload error:', err);
-    }
+  } catch (err) {
+    console.error(err);
+    this.isLoading.set(false);
+  } finally {
+    this.isLoading.set(false);  // ✅ STOP LOADER
   }
+}
   async extractData() {
     if (!this.sessionId()) return;
 
     try {
-      const res: any = await fetch('http://127.0.0.1:8000/extract-data', {
+      const res: any = await fetch('http://127.0.0.1:8000/api/v1/extract/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -128,44 +136,49 @@ this.cdr.detectChanges();
     } catch (err) {
       console.error('Extract error:', err);
     }
+    finally {
+    // 🔥 stop loader → show data
+    this.isExtracting.set(false);
+  }
   }
 
   // ---------------- CHAT ----------------
 
   async sendMessage() {
-    if (!this.chatInput() || !this.sessionId()) return;
+  setTimeout(() => this.scrollToBottom(), 50);
+  if (!this.chatInput() || !this.sessionId()) return;
 
-    const userMsg = this.chatInput();
+  const userMsg = this.chatInput();
 
-    // add user message
-    this.chatMessages.update(m => [...m, { role: 'user', text: userMsg }]);
+  this.chatMessages.update(m => [...m, { role: 'user', text: userMsg }]);
+  this.chatInput.set('');
 
-    this.chatInput.set('');
+  this.isThinking.set(true);   // 🔥 START THINKING
 
-    try {
-      const res: any = await fetch('http://127.0.0.1:8000/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          session_id: this.sessionId(),
-          query: userMsg
-        })
-      });
+  try {
+    const res: any = await fetch('http://127.0.0.1:8000/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        session_id: this.sessionId(),
+        query: userMsg
+      })
+    });
 
-      const data = await res.json();
+    const data = await res.json();
 
-      // add AI response
-      this.chatMessages.update(m => [
-        ...m,
-        { role: 'ai', text: data.response }
-      ]);
+    this.chatMessages.update(m => [
+      ...m,
+      { role: 'ai', text: data.response }
+    ]);
 
-    } catch (err) {
-      console.error('Chat error:', err);
-    }
+  } catch (err) {
+    console.error(err);
+  } finally {
+    this.isThinking.set(false);  // 🔥 STOP
+    setTimeout(() => this.scrollToBottom(), 50);
   }
+}
   copyRequest() {
   const text = JSON.stringify({
     session_id: this.sessionId() || 'No Session'
@@ -192,12 +205,55 @@ copyResponse() {
   });
 }
 copyEndpoint() {
-  const text = `/api/v1/extract/${this.sessionId() || 'No Session'}`;
+  const text = `http://127.0.0.1:8000/api/v1/extract/`;
 
   navigator.clipboard.writeText(text).then(() => {
     this.copiedEndpoint.set(true);
 
     setTimeout(() => this.copiedEndpoint.set(false), 1500);
   });
+}
+onDragOver(event: DragEvent) {
+  event.preventDefault();
+  this.isDragging.set(true);
+}
+
+onDragLeave(event: DragEvent) {
+  event.preventDefault();
+  this.isDragging.set(false);
+}
+
+onDrop(event: DragEvent) {
+  event.preventDefault();
+  this.isDragging.set(false);
+
+  const file = event.dataTransfer?.files?.[0];
+
+  if (file) {
+    this.handleFile(file);
+  }
+}
+async handleFile(file: File) {
+  this.selectedFileName.set(file.name);
+
+  const objectUrl = URL.createObjectURL(file);
+  this._selectedFileUrl =
+    this.sanitizer.bypassSecurityTrustResourceUrl(objectUrl);
+
+  await this.uploadPdf(file);
+}
+scrollToBottom() {
+  try {
+    const el = this.chatContainer?.nativeElement;
+    el.scrollTop = el.scrollHeight;
+  } catch {}
+}
+resetChat() {
+  this.chatMessages.set([]);
+  this.chatInput.set('');
+  this.isThinking.set(false);
+
+  // optional: scroll reset
+  setTimeout(() => this.scrollToBottom(), 50);
 }
 }

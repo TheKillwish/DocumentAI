@@ -245,36 +245,58 @@
         >
           <!-- Classification Header -->
           <div class="border-b border-white/10 bg-slate-900/60 px-4 py-4 md:px-5 md:py-5">
-            <div class="flex items-start justify-between gap-3">
-              <div>
-                <div class="flex items-center gap-2 mb-2">
-                  <span
-                    class="inline-flex items-center rounded-full bg-cyan-500/15 px-2 py-0.5 text-[0.65rem] font-medium uppercase tracking-wide text-cyan-300 border border-cyan-400/40"
-                  >
-                    <i class="fa-solid fa-file-invoice mr-1"></i>
-                    {{ classification()?.document_type || 'Unknown' }}
-                  </span>
-                  <span
-                    class="inline-flex items-center rounded-full bg-emerald-500/10 px-2 py-0.5 text-[0.65rem] font-medium text-emerald-300 border border-emerald-500/40"
-                  >
-                    <i class="fa-solid fa-shield-check mr-1"></i>
-{{ classification()?.confidence_score *100 || '' }}% Confidence
-                  </span>
-                </div>
-                <h2 class="text-base md:text-lg font-semibold tracking-tight mb-1">
-                  {{ classification()?.document_title || 'Document title' }}
-                </h2>
-                <p class="text-xs md:text-sm text-slate-400 leading-relaxed">
-                  {{ classification()?.document_summary || 'Summary of document shows here' }}
-                </p>
+            
+                @if (isLoading()) {
+
+                  <!-- 🔥 LOADER -->
+            <div class="flex items-center justify-center gap-3">
+                  <div class="w-full h-[120px] flex justify-center items-center mx-auto">
+                    <div class="loader-con mx-auto">
+                      <div class="pfile" style="--i:0"></div>
+                      <div class="pfile" style="--i:1"></div>
+                      <div class="pfile" style="--i:2"></div>
+                      <div class="pfile" style="--i:3"></div>
+                      <div class="pfile" style="--i:4"></div>
+                      <div class="pfile" style="--i:5"></div>
+                    </div>
+                  </div>
               </div>
-              <div
+
+                } @else {
+                  <div class="flex items-start justify-between gap-3">
+                    <div>
+                  <!-- ✅ ORIGINAL CONTENT -->
+                  <div class="flex items-center gap-2 mb-2">
+                    <span class="inline-flex items-center rounded-full bg-cyan-500/15 px-2 py-0.5 text-[0.65rem] font-medium uppercase tracking-wide text-cyan-300 border border-cyan-400/40">
+                      <i class="fa-solid fa-file-invoice mr-1"></i>
+                      {{ classification()?.document_type || 'Unknown' }}
+                    </span>
+
+                    <span class="inline-flex items-center rounded-full bg-emerald-500/10 px-2 py-0.5 text-[0.65rem] font-medium text-emerald-300 border border-emerald-500/40">
+                      <i class="fa-solid fa-shield-check mr-1"></i>
+                      {{ classification()?.confidence_score * 100 || '' }}% Confidence
+                    </span>
+                  </div>
+
+                  <h2 class="text-base md:text-lg font-semibold tracking-tight mb-1">
+                    {{ classification()?.document_title || 'Document title' }}
+                  </h2>
+
+                  <p class="text-xs md:text-sm text-slate-400 leading-relaxed">
+                    {{ classification()?.document_summary || 'Summary of document shows here' }}
+                  </p>
+                  </div>
+                  <div
                 class="hidden sm:flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/20 border border-emerald-400/50 text-emerald-300"
               >
                 <i class="fa-solid fa-check text-lg"></i>
               </div>
+                  </div>
+
+                }
+              
             </div>
-          </div>
+
 
           <!-- Tabs -->
           <div class="border-b border-white/10 bg-slate-900/40 px-3 pt-2 md:px-4">
@@ -298,12 +320,13 @@
               </button>
 
               <button
-                type="button"
-                class="relative flex flex-1 items-center justify-center rounded-t-lg px-2 py-2 text-xs md:text-sm font-medium transition"
-                [class.text-cyan-300]="activeTab() === 'chat'"
-                [class.text-slate-400]="activeTab() !== 'chat'"
-                (click)="setTab('chat')"
-              >
+                  type="button"
+                  class="relative flex flex-1 items-center justify-center rounded-t-lg px-2 py-2 text-xs md:text-sm font-medium transition"
+                  [class.text-cyan-300]="activeTab() === 'chat'"
+                  [class.text-slate-400]="activeTab() !== 'chat'"
+                  [class.tab-disabled]="!sessionId()"
+                  (click)="setTab('chat')"
+                >
                 <span class="flex items-center gap-1.5">
                   <i class="fa-solid fa-comments text-[0.8rem]"></i>
                   <span>Chat with PDF</span>
@@ -316,12 +339,13 @@
               </button>
 
               <button
-                type="button"
-                class="relative flex flex-1 items-center justify-center rounded-t-lg px-2 py-2 text-xs md:text-sm font-medium transition"
-                [class.text-cyan-300]="activeTab() === 'api'"
-                [class.text-slate-400]="activeTab() !== 'api'"
-                (click)="setTab('api')"
-              >
+                  type="button"
+                  class="relative flex flex-1 items-center justify-center rounded-t-lg px-2 py-2 text-xs md:text-sm font-medium transition"
+                  [class.text-cyan-300]="activeTab() === 'api'"
+                  [class.text-slate-400]="activeTab() !== 'api'"
+                  [class.tab-disabled]="!sessionId()"
+                  (click)="setTab('api')"
+                >
                 <span class="flex items-center gap-1.5">
                   <i class="fa-solid fa-code text-[0.8rem]"></i>
                   <span>API & Export</span>
@@ -338,49 +362,123 @@
           <!-- TAB CONTENT AREA -->
           <div class="flex-1 overflow-hidden scroll-glass scroll-glow">
             @if (activeTab() === 'extracted') {
-              <div class="h-full overflow-y-auto scroll-glass scroll-glow px-4 py-4 md:px-5 md:py-5 space-y-3">
-                <div class="flex items-center justify-between mb-1">
-                  <h3 class="text-xs md:text-sm font-semibold text-slate-200">
-                    Extracted Key Fields
-                  </h3>
-                  <span
-                    class="inline-flex items-center gap-1 rounded-full bg-slate-800/80 px-2 py-0.5 text-[0.65rem] text-slate-400 border border-white/10"
-                  >
-                    <i class="fa-solid fa-robot text-[0.7rem] text-cyan-400"></i>
-                    OpenAI Engine
-                  </span>
-                </div>
+              <div class="h-full overflow-hidden">
 
-                @if (entries().length > 0) {
-  <div class="grid grid-cols-1 gap-3">
+  <!-- 🟢 STATE 1: Upload Button -->
+  @if (!sessionId() && !isUploading()) {
 
-    @for (item of entries(); track item[0]) {
+    <div class="h-full flex items-center justify-center">
       <div
-  class="rounded-xl bg-white/5 border border-white/10 px-3 py-3 md:px-4 md:py-3 shadow-sm shadow-cyan-500/5"
+  (click)="onUploadClick()"
+  (dragover)="onDragOver($event)"
+  (dragleave)="onDragLeave($event)"
+  (drop)="onDrop($event)"
+  class="group relative flex flex-col items-center justify-center gap-3 cursor-pointer overflow-hidden scroll-glass scroll-glow rounded-2xl border-2 border-dashed border-cyan-400/60 bg-cyan-500/10 px-6 py-6 text-xs md:text-sm font-medium text-cyan-100 shadow-lg shadow-cyan-500/20 transition duration-200 hover:border-cyan-300 hover:bg-cyan-500/20 w-3/4"
+  [class.border-cyan-300]="isDragging()"
+  [class.drag-active]="isDragging()"
+  [class.bg-cyan-500/20]="isDragging()"
 >
-  <p
-    class="text-[0.65rem] md:text-xs font-normal text-slate-100 flex justify-between"
-    [class.text-emerald-400]="item[0].toLowerCase().includes('amount')"
-    [class.font-semibold]="item[0].toLowerCase().includes('amount')"
+
+  <!-- glow effect -->
+  <span
+    class="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-r from-cyan-500/20 via-transparent to-indigo-500/20 opacity-0 blur-xl transition-opacity duration-300 group-hover:opacity-100"
+  ></span>
+
+  <!-- icon -->
+  <div
+    class="h-12 w-12 flex items-center justify-center rounded-full bg-cyan-500/20 text-lg"
   >
-    <span class="text-slate-400 uppercase tracking-wide text-[0.6rem] md:text-[0.7rem]">
-      {{ item[0].replaceAll('_', ' ') }} :
-    </span>
-
-    <span class="ml-2 text-right text-[0.65rem] md:text-xs">
-      {{ item[1] }}
-    </span>
-  </p>
-</div>
-    }
-
+    <i class="fa-solid fa-cloud-arrow-up"></i>
   </div>
-}
-              </div>
+
+  <!-- text -->
+  <div class="text-center">
+    <p class="text-sm font-semibold">
+      {{ selectedFileName() || 'Drag & Drop PDF' }}
+    </p>
+    <p class="text-[0.65rem] text-slate-400 mt-1">
+      or click to browse
+    </p>
+  </div>
+
+</div>
+    </div>
+
+  }
+
+  <!-- 🔵 STATE 2: EVA LOADER -->
+  @else if (isUploading() || isExtracting()) {
+
+    <div class="h-full flex flex-col items-center justify-center">
+
+  <!-- FORCE SIZE + CENTER -->
+  <div class="flex items-center justify-center w-full">
+    <div class="loader-wrapper">
+      <div class="modelViewPort">
+        <div class="eva">
+          <div class="head">
+            <div class="eyeChamber">
+              <div class="eye"></div>
+              <div class="eye"></div>
+            </div>
+          </div>
+          <div class="body">
+            <div class="hand"></div>
+            <div class="hand"></div>
+            <div class="scannerThing"></div>
+            <div class="scannerOrigin"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="text-xs text-slate-400 mt-4 text-center">
+    Extracting Key Fields...
+  </p>
+
+</div>
+
+  }
+
+  <!-- 🟣 STATE 3: EXTRACTED DATA -->
+  @else if (entries().length > 0) {
+
+    <div class="h-full overflow-y-auto scroll-glass scroll-glow px-4 py-4 md:px-5 md:py-5">
+
+      <div class="grid grid-cols-1 gap-3">
+
+        @for (item of entries(); track item[0]) {
+          <div
+            class="rounded-xl bg-white/5 border border-white/10 px-3 py-3 md:px-4 md:py-3 shadow-sm shadow-cyan-500/5 transition hover:bg-white/10"
+          >
+            <p
+              class="text-[0.7rem] md:text-xs flex justify-between items-center"
+              [class.text-emerald-400]="item[0].toLowerCase().includes('amount')"
+              [class.font-semibold]="item[0].toLowerCase().includes('amount')"
+            >
+              <span class="text-slate-400 uppercase tracking-wide text-[0.6rem] md:text-[0.7rem]">
+                {{ item[0].replaceAll('_', ' ') }} :
+              </span>
+
+              <span class="text-slate-100 text-right">
+                {{ item[1] || '—' }}
+              </span>
+            </p>
+          </div>
+        }
+
+      </div>
+
+    </div>
+
+  }
+
+</div>
             } @else if (activeTab() === 'chat') {
               <div class="relative flex h-full flex-col px-4 py-3 md:px-5 md:py-4">
   <!-- Messages -->
-  <div class="flex-1 space-y-3 overflow-y-auto scroll-glass scroll-glow pr-1">
+  <div #chatContainer class="flex-1 space-y-3 overflow-y-auto scroll-glass scroll-glow pr-1">
 
     <!-- System AI intro (only once if no messages) -->
     @if (chatMessages().length === 0) {
@@ -388,7 +486,11 @@
         <div
           class="mt-1 flex h-7 w-7 items-center justify-center rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-400/60 text-xs"
         >
-          <i class="fa-solid fa-robot"></i>
+          <div
+              class="mt-1 flex h-7 w-7 items-center justify-center rounded-full bg-cyan-500/10 border border-cyan-400/40"
+            >
+              <div class="ai-orb-loader"></div>
+            </div>
         </div>
         <div
           class="max-w-[80%] rounded-2xl bg-slate-800/80 px-3 py-2 text-xs md:text-sm text-slate-100 border border-white/10 shadow-md shadow-cyan-500/10"
@@ -436,6 +538,25 @@
       }
 
     }
+    @if (isThinking()) {
+  <div class="flex items-start gap-3">
+    
+    <!-- small bot loader -->
+    <div class="mt-1 flex h-7 w-7 items-center justify-center rounded-full bg-cyan-500/10 border border-cyan-400/40">
+        <div class="ai-orb-loader"></div>
+    </div>
+
+    <!-- dots -->
+    <div class="max-w-[80%] rounded-2xl bg-slate-800/90 px-3 py-2 border border-cyan-500/40">
+      <section class="dots-container thinking-loader">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </section>
+    </div>
+
+  </div>
+}
   </div>
 
   <!-- Input -->
@@ -498,7 +619,7 @@
                     <div
                       class="flex-1 rounded-lg bg-black/40 px-2 py-2 text-[0.7rem] md:text-xs font-mono text-slate-100 border border-slate-700/70 overflow-x-auto scroll-glass scroll-glow"
                     >
-                      /api/v1/extract/
+                      http://127.0.0.1:8000/api/v1/extract/
                     </div>
                     <button
   (click)="copyEndpoint()"
