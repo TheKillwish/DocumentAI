@@ -1,314 +1,241 @@
-🚀 DocuIntel AI
+<h1 align="center">🚀 DocuIntel AI</h1>
 
-AI-Powered Document Intelligence Platform
+<p align="center">
+  <b>AI-Powered Document Intelligence Platform</b><br/>
+  Upload • Classify • Extract • Chat
+</p>
 
-DocuIntel AI is a full-stack application that enables users to upload documents (PDFs), automatically classify them, extract key structured data, and interact with them using an AI-powered chat interface.
+<p align="center">
+  <img src="https://img.shields.io/badge/FastAPI-Backend-0ea5e9?style=for-the-badge"/>
+  <img src="https://img.shields.io/badge/Angular-Frontend-6366f1?style=for-the-badge"/>
+  <img src="https://img.shields.io/badge/OpenAI-AI-22d3ee?style=for-the-badge"/>
+</p>
 
----
+<hr/>
 
-✨ Features
+<h2>✨ Features</h2>
 
-- 📄 Upload and process PDF documents
-- 🧠 AI-based document classification (Invoice, Payslip, Resume, etc.)
-- 📊 Intelligent data extraction (dynamic + structured JSON output)
-- 💬 Chat with your document (context-aware AI responses)
-- ⚡ FastAPI backend with OpenAI integration
-- 🎨 Modern Angular UI with glassmorphism design
-- 🔐 Secure API key handling via environment variables
+<ul>
+  <li>📄 Upload and process PDF documents</li>
+  <li>🧠 AI-based document classification (Invoice, Payslip, Resume, etc.)</li>
+  <li>📊 Intelligent structured data extraction (dynamic JSON)</li>
+  <li>💬 Chat with your document (context-aware AI)</li>
+  <li>⚡ FastAPI backend with OpenAI integration</li>
+  <li>🎨 Modern Angular UI with glassmorphism design</li>
+  <li>🔐 Secure API key handling via environment variables</li>
+</ul>
 
----
+<hr/>
 
-🏗️ Project Structure
+<h2>🏗️ Project Structure</h2>
 
+<pre>
 frontend/        # Angular UI
-
 backend/         # FastAPI backend
-
 README.md
+.gitignore
+</pre>
 
-gitignore
+<hr/>
 
----
+<h2>⚙️ Tech Stack</h2>
 
-⚙️ Tech Stack
+<h3>Frontend</h3>
+<ul>
+  <li>Angular (Standalone Components)</li>
+  <li>Tailwind CSS</li>
+  <li>Signals API</li>
+</ul>
 
-Frontend
+<h3>Backend</h3>
+<ul>
+  <li>FastAPI</li>
+  <li>OpenAI API</li>
+  <li>Python</li>
+</ul>
 
-- Angular (Standalone Components)
-- Tailwind CSS
-- Signals API
+<hr/>
 
-Backend
+<h2>📸 Screenshots</h2>
 
-- FastAPI
-- OpenAI API
-- Python
+<p align="center"><b>UI</b></p>
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/02047218-6291-4cfc-a460-bc45d8bfcb58" width="800"/>
+</p>
 
----
+<p align="center"><b>Upload Document</b></p>
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/30e07f17-abe3-4830-a90f-006e6ee8a498" width="800"/>
+</p>
 
-📸 Screenshots
-UI:
-<img width="950" height="494" alt="image" src="https://github.com/user-attachments/assets/02047218-6291-4cfc-a460-bc45d8bfcb58" />
+<p align="center"><b>Classification & Extraction</b></p>
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/3a8d0266-7041-4b6b-98aa-eb6b6928ba79" width="800"/>
+</p>
 
-Upload Document:
-<img width="953" height="497" alt="image" src="https://github.com/user-attachments/assets/30e07f17-abe3-4830-a90f-006e6ee8a498" />
+<p align="center"><b>Chat Bot</b></p>
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/06305a98-b9e3-43b1-8b7b-32f43a2733ec" width="800"/>
+</p>
 
-Classification and Extraction done:
-<img width="950" height="496" alt="image" src="https://github.com/user-attachments/assets/3a8d0266-7041-4b6b-98aa-eb6b6928ba79" />
+<p align="center"><b>API Integration</b></p>
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/3381d736-06ef-4f42-a8c3-c1b4a93d1c60" width="800"/>
+</p>
 
-Chat-Bot:
-<img width="952" height="493" alt="image" src="https://github.com/user-attachments/assets/06305a98-b9e3-43b1-8b7b-32f43a2733ec" />
+<hr/>
 
-API Endpoint for external tool:
-<img width="950" height="493" alt="image" src="https://github.com/user-attachments/assets/3381d736-06ef-4f42-a8c3-c1b4a93d1c60" />
+<h2>🧑‍💻 Local Setup Guide</h2>
 
+<h3>🔹 1. Clone Repository</h3>
 
+<pre>
+git clone https://github.com/TheKillwish/DocumentAI
+cd DocumentAI
+</pre>
 
+<hr/>
 
+<h2>🧠 Backend Setup (FastAPI)</h2>
 
+<h3>🔹 Navigate</h3>
 
+<pre>cd backend</pre>
 
+<h3>🔹 Create Virtual Environment</h3>
 
-
-
----
-
-🧑‍💻 Local Setup Guide
-
----
-
-🔹 1. Clone Repository
-
-git clone https://github.com/YOUR_USERNAME/docuintel-ai.git
-cd docuintel-ai
-
----
-
-🧠 BACKEND SETUP (FastAPI)
-
----
-
-🔹 2. Navigate to backend
-
-cd backend
-
----
-
-🔹 3. Create Virtual Environment
-
-Windows:
-
+<pre>
 python -m venv env
-env\Scripts\activate
+env\Scripts\activate     (Windows)
 
-Mac/Linux:
+source env/bin/activate  (Mac/Linux)
+</pre>
 
-python3 -m venv env
-source env/bin/activate
+<h3>🔹 Install Dependencies</h3>
 
----
+<pre>pip install -r requirements.txt</pre>
 
-🔹 4. Install Dependencies
+<h3>🔹 Set OpenAI API Key</h3>
 
-pip install -r requirements.txt
-
-«If "requirements.txt" is missing:»
-
-pip install fastapi uvicorn openai python-multipart numpy
-
----
-
-🔹 5. Set OpenAI API Key
-
-Option A: Environment Variable (Recommended)
-
-Windows (CMD):
-
-set OPENAI_API_KEY=your_api_key_here
-
-PowerShell:
-
-$env:OPENAI_API_KEY="your_api_key_here"
-
-Mac/Linux:
-
+<pre>
 export OPENAI_API_KEY="your_api_key_here"
+</pre>
 
----
+<h3>🔹 Run Server</h3>
 
-Option B: ".env" file
+<pre>python -m uvicorn main:app --reload</pre>
 
-Create a ".env" file in "backend/":
+<p>
+Backend: <a href="http://127.0.0.1:8000">http://127.0.0.1:8000</a><br/>
+Docs: <a href="http://127.0.0.1:8000/docs">Swagger UI</a>
+</p>
 
-OPENAI_API_KEY=your_api_key_here
+<hr/>
 
-Then install:
+<h2>🎨 Frontend Setup (Angular)</h2>
 
-pip install python-dotenv
+<h3>🔹 Navigate</h3>
 
----
+<pre>cd frontend</pre>
 
-🔹 6. Run Backend Server
+<h3>🔹 Install</h3>
 
-python -m uvicorn main:app --reload
+<pre>npm install</pre>
 
-👉 Backend runs at:
+<h3>🔹 Run</h3>
 
-http://127.0.0.1:8000
+<pre>ng serve</pre>
 
-👉 Swagger Docs:
+<p>
+Frontend: <a href="http://localhost:4200">http://localhost:4200</a>
+</p>
 
-http://127.0.0.1:8000/docs
+<hr/>
 
----
+<h2>🔗 API Endpoints</h2>
 
-🎨 FRONTEND SETUP (Angular)
+<h3>📤 Upload PDF</h3>
+<pre>POST /upload-pdf</pre>
 
----
-
-🔹 7. Navigate to frontend
-
-cd ../frontend
-
----
-
-🔹 8. Install Dependencies
-
-npm install
-
----
-
-🔹 9. Run Angular App
-
-ng serve
-
-👉 Frontend runs at:
-
-http://localhost:4200
-
----
-
-🔗 API Endpoints
-
----
-
-📤 Upload PDF
-
-POST /upload-pdf
-
-- Upload PDF using multipart/form-data
-- Returns session_id + classification
-
----
-
-📊 Extract Data
-
+<h3>📊 Extract Data</h3>
+<pre>
 POST /extract-data
-
-Request:
 
 {
   "session_id": "your_session_id"
 }
+</pre>
 
----
-
-💬 Chat with Document
-
+<h3>💬 Chat</h3>
+<pre>
 POST /chat
-
-Request:
 
 {
   "session_id": "your_session_id",
   "query": "What is this document about?"
 }
+</pre>
 
----
+<hr/>
 
-🔥 How It Works
+<h2>🔥 How It Works</h2>
 
-1. Upload PDF
-2. Backend classifies document
-3. Embeddings stored per session
-4. Extraction uses AI prompt
-5. Chat queries use semantic similarity
+<ol>
+  <li>Upload PDF</li>
+  <li>AI classifies document</li>
+  <li>Embeddings stored per session</li>
+  <li>Data extracted using prompts</li>
+  <li>Chat uses semantic similarity</li>
+</ol>
 
----
+<hr/>
 
-⚠️ Common Issues & Fixes
+<h2>⚠️ Common Issues</h2>
 
----
+<ul>
+  <li><b>uvicorn not recognized</b><br/>python -m uvicorn main:app --reload</li>
+  <li><b>CORS Error</b> → enable CORSMiddleware in backend</li>
+  <li><b>OpenAI Error</b> → check API key & internet</li>
+</ul>
 
-❌ uvicorn not recognized
+<hr/>
 
-python -m uvicorn main:app --reload
+<h2>🛡️ Security</h2>
 
----
+<ul>
+  <li>Never commit <code>.env</code></li>
+  <li>Keep API keys secure</li>
+  <li>Use <code>.gitignore</code></li>
+</ul>
 
-❌ CORS Error
+<hr/>
 
-Ensure backend has:
+<h2>🚀 Future Improvements</h2>
 
-from fastapi.middleware.cors import CORSMiddleware
+<ul>
+  <li>PDF field highlighting</li>
+  <li>Multi-document chat</li>
+  <li>Excel export</li>
+  <li>Authentication system</li>
+  <li>Docker deployment</li>
+</ul>
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+<hr/>
 
----
+<h2>🤝 Contributing</h2>
 
-❌ OpenAI API Error
+<p>Pull requests are welcome! Open an issue first for major changes.</p>
 
-- Check API key is set
-- Ensure internet connection
-- Verify SSL settings
+<hr/>
 
----
+<h2>⭐ Support</h2>
 
-🛡️ Security Notes
+<p align="center">
+  ⭐ Star the repo &nbsp; | &nbsp; 🍴 Fork &nbsp; | &nbsp; 🚀 Build on top
+</p>
 
-- Never commit ".env" files
-- Keep API keys secure
-- Use ".gitignore" properly
+<hr/>
 
----
-
-🚀 Future Improvements
-
-- PDF highlighting (click field → scroll to location)
-- Multi-document support
-- Export to Excel / CSV
-- Role-based authentication
-- Deployment (Docker + Cloud)
-
----
-
-🤝 Contributing
-
-Pull requests are welcome!
-For major changes, please open an issue first.
-
----
-
-📄 License
-
-This project is licensed under the MIT License.
-
----
-
-⭐ Support
-
-If you like this project:
-
-⭐ Star the repo
-🍴 Fork it
-🚀 Build on top of it
-
----
-
-Built with ❤️ using FastAPI + Angular + OpenAI 
+<p align="center">
+  Built with ❤️ using FastAPI + Angular + OpenAI
+</p>
