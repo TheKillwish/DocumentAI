@@ -1,0 +1,129 @@
+/* ========================= */
+/* 🌌 GLOBAL SCROLLBAR STYLE */
+/* ========================= */
+
+/* Width */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Thumb (main glowing part) */
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    180deg,
+    rgba(34, 211, 238, 0.6),   /* cyan */
+    rgba(99, 102, 241, 0.6)    /* indigo */
+  );
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  box-shadow:
+    0 0 6px rgba(34, 211, 238, 0.6),
+    0 0 12px rgba(99, 102, 241, 0.4);
+
+  transition: all 0.25s ease;
+}
+
+/* Hover Glow */
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(
+    180deg,
+    rgba(34, 211, 238, 0.9),
+    rgba(99, 102, 241, 0.9)
+  );
+
+  box-shadow:
+    0 0 10px rgba(34, 211, 238, 0.9),
+    0 0 20px rgba(99, 102, 241, 0.6);
+}
+
+/* Firefox support */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(34, 211, 238, 0.6) transparent;
+}
+
+/* ========================= */
+/* ✨ SMOOTH SCROLL */
+/* ========================= */
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* ========================= */
+/* 🧊 GLASS SCROLL CONTAINER */
+/* ========================= */
+
+.scroll-glass {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  scrollbar-gutter: stable;
+}
+
+/* ========================= */
+/* 🌟 EDGE GLOW EFFECT */
+/* ========================= */
+
+.scroll-glow {
+  position: relative;
+}
+
+.scroll-glow::before,
+.scroll-glow::after {
+  content: '';
+  position: sticky;
+  left: 0;
+  right: 0;
+  height: 14px;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Top glow */
+.scroll-glow::before {
+  top: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(15, 23, 42, 0.9),
+    transparent
+  );
+}
+
+/* Bottom glow */
+.scroll-glow::after {
+  bottom: 0;
+  background: linear-gradient(
+    to top,
+    rgba(15, 23, 42, 0.9),
+    transparent
+  );
+}
+
+/* ========================= */
+/* 🌈 OPTIONAL: HOVER FADE-IN SCROLLBAR */
+/* ========================= */
+
+.scroll-hover::-webkit-scrollbar-thumb {
+  opacity: 0.3;
+}
+
+.scroll-hover:hover::-webkit-scrollbar-thumb {
+  opacity: 1;
+}
+
+@keyframes floatOrb {
+  0% { transform: translate(0, 0); }
+  50% { transform: translate(20px, -20px); }
+  100% { transform: translate(0, 0); }
+}
+
+.orb-animate {
+  animation: floatOrb 12s ease-in-out infinite;
+}

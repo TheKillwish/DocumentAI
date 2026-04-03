@@ -1,0 +1,37 @@
+# =========================
+# FRONTEND (Angular)
+# =========================
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+frontend/.cache/
+
+# =========================
+# BACKEND (Python / FastAPI)
+# =========================
+backend/__pycache__/
+backend/*.pyc
+backend/*.pyo
+backend/*.pyd
+
+backend/env/
+backend/.venv/
+backend/venv/
+
+# =========================
+# ENV FILES (IMPORTANT)
+# =========================
+.env
+*.env
+
+# =========================
+# OS FILES
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# IDE FILES
+# =========================
+.vscode/
+.idea/
