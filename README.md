@@ -2,7 +2,7 @@
 
 <p align="center">
   <b>AI-Powered Document Intelligence Platform</b><br/>
-  Upload • Classify • Extract • Chat
+  Upload • Classify • Extract • Chat • Bulk Process
 </p>
 
 <p align="center">
@@ -17,10 +17,17 @@
 
 <ul>
   <li>📄 Upload and process PDF documents</li>
-  <li>🧠 AI-based document classification (Invoice, Payslip, Resume, etc.)</li>
+  <li>📦 Bulk document upload with batch processing</li>
+  <li>🧠 AI-based document classification (Invoice, Resume, Payslip, etc.)</li>
+  <li>🗂️ Automatic class grouping of documents</li>
   <li>📊 Intelligent structured data extraction (dynamic JSON)</li>
+  <li>📁 Session-based document processing</li>
   <li>💬 Chat with your document (context-aware AI)</li>
-  <li>⚡ FastAPI backend with OpenAI integration</li>
+  <li>⚡ Real-time progress tracking for bulk processing</li>
+  <li>📥 Export single document data to CSV</li>
+  <li>📤 Export all documents data (bulk CSV)</li>
+  <li>📊 Export data by document class</li>
+  <li>🎯 Dynamic UI updates based on selected document/session</li>
   <li>🎨 Modern Angular UI with glassmorphism design</li>
   <li>🔐 Secure API key handling via environment variables</li>
 </ul>
@@ -43,14 +50,14 @@ README.md
 <h3>Frontend</h3>
 <ul>
   <li>Angular (Standalone Components)</li>
-  <li>Tailwind CSS</li>
-  <li>Signals API</li>
+  <li>Signals API (Reactive State Management)</li>
+  <li>Tailwind CSS (Modern UI)</li>
 </ul>
 
 <h3>Backend</h3>
 <ul>
   <li>FastAPI</li>
-  <li>OpenAI API</li>
+  <li>OpenAI API (Vision + LLM)</li>
   <li>Python</li>
 </ul>
 
@@ -58,30 +65,44 @@ README.md
 
 <h2>📸 Screenshots</h2>
 
-<p align="center"><b>UI</b></p>
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/02047218-6291-4cfc-a460-bc45d8bfcb58" width="800"/>
-</p>
+<p align="center"><b>🏠 Dashboard UI Overview</b></p>
+<!-- Add screenshot -->
 
-<p align="center"><b>Upload Document</b></p>
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/30e07f17-abe3-4830-a90f-006e6ee8a498" width="800"/>
-</p>
+<p align="center"><b>📤 Single File Upload Flow</b></p>
+<!-- Add screenshot -->
 
-<p align="center"><b>Classification & Extraction</b></p>
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/3a8d0266-7041-4b6b-98aa-eb6b6928ba79" width="800"/>
-</p>
+<p align="center"><b>📦 Bulk Upload & Processing</b></p>
+<!-- Add screenshot -->
 
-<p align="center"><b>Chat Bot</b></p>
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/06305a98-b9e3-43b1-8b7b-32f43a2733ec" width="800"/>
-</p>
+<p align="center"><b>📊 Real-time Progress Tracking</b></p>
+<!-- Add screenshot -->
 
-<p align="center"><b>API Integration</b></p>
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/3381d736-06ef-4f42-a8c3-c1b4a93d1c60" width="800"/>
-</p>
+<p align="center"><b>🧠 Document Classification Result</b></p>
+<!-- Add screenshot -->
+
+<p align="center"><b>📄 Extracted Structured Data View</b></p>
+<!-- Add screenshot -->
+
+<p align="center"><b>🗂️ Class-Based Document Grouping</b></p>
+<!-- Add screenshot -->
+
+<p align="center"><b>📑 Multi-Document Navigation (Left Panel)</b></p>
+<!-- Add screenshot -->
+
+<p align="center"><b>💬 Chat with Document</b></p>
+<!-- Add screenshot -->
+
+<p align="center"><b>🔗 API & JSON Response Panel</b></p>
+<!-- Add screenshot -->
+
+<p align="center"><b>📥 Export Single File (CSV)</b></p>
+<!-- Add screenshot -->
+
+<p align="center"><b>📤 Export All Files (Bulk CSV)</b></p>
+<!-- Add screenshot -->
+
+<p align="center"><b>📊 Export by Document Class</b></p>
+<!-- Add screenshot -->
 
 <hr/>
 
@@ -99,7 +120,6 @@ cd DocumentAI
 <h2>🧠 Backend Setup (FastAPI)</h2>
 
 <h3>🔹 Navigate</h3>
-
 <pre>cd backend</pre>
 
 <h3>🔹 Create Virtual Environment</h3>
@@ -135,15 +155,12 @@ Docs: <a href="http://127.0.0.1:8000/docs">Swagger UI</a>
 <h2>🎨 Frontend Setup (Angular)</h2>
 
 <h3>🔹 Navigate</h3>
-
 <pre>cd frontend</pre>
 
 <h3>🔹 Install</h3>
-
 <pre>npm install</pre>
 
 <h3>🔹 Run</h3>
-
 <pre>ng serve</pre>
 
 <p>
@@ -159,7 +176,7 @@ Frontend: <a href="http://localhost:4200">http://localhost:4200</a>
 
 <h3>📊 Extract Data</h3>
 <pre>
-POST /extract-data
+POST /api/v1/extract/
 
 {
   "session_id": "your_session_id"
@@ -181,11 +198,14 @@ POST /chat
 <h2>🔥 How It Works</h2>
 
 <ol>
-  <li>Upload PDF</li>
-  <li>AI classifies document</li>
-  <li>Embeddings stored per session</li>
-  <li>Data extracted using prompts</li>
-  <li>Chat uses semantic similarity</li>
+  <li>Upload single or multiple PDFs</li>
+  <li>AI classifies each document</li>
+  <li>Session created per document</li>
+  <li>Structured data extracted dynamically</li>
+  <li>Documents grouped by class automatically</li>
+  <li>User selects document → UI updates instantly</li>
+  <li>Chat works based on selected session</li>
+  <li>Export data (single / bulk / class-wise)</li>
 </ol>
 
 <hr/>
@@ -196,6 +216,7 @@ POST /chat
   <li><b>uvicorn not recognized</b><br/>python -m uvicorn main:app --reload</li>
   <li><b>CORS Error</b> → enable CORSMiddleware in backend</li>
   <li><b>OpenAI Error</b> → check API key & internet</li>
+  <li><b>Slow processing</b> → depends on document size & API latency</li>
 </ul>
 
 <hr/>
@@ -213,11 +234,12 @@ POST /chat
 <h2>🚀 Future Improvements</h2>
 
 <ul>
-  <li>PDF field highlighting</li>
-  <li>Multi-document chat</li>
-  <li>Excel export</li>
-  <li>Authentication system</li>
-  <li>Docker deployment</li>
+  <li>📌 Field-level PDF highlighting</li>
+  <li>📚 Multi-document chat (cross-session)</li>
+  <li>📊 Advanced analytics dashboard</li>
+  <li>🔐 Authentication & user sessions</li>
+  <li>🐳 Docker deployment</li>
+  <li>⚡ Background job queue (Celery / Redis)</li>
 </ul>
 
 <hr/>
