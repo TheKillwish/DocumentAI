@@ -66,6 +66,9 @@ employer_name
 salary
 start_date
 
+Generic:
+"Extract most Suitable data points based on the file"
+
 Document Type: {doc_type}
 
 Content:

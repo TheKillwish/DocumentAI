@@ -53,44 +53,80 @@
         </div>
       </div>
 
-      <div class="flex items-center gap-4">
-        <div class="text-right hidden sm:block">
-          <p class="text-[0.70rem] uppercase tracking-wide text-slate-500 font-medium">
-            Session ID
-          </p>
-          <p class="text-xs font-mono text-slate-300">{{ sessionId() || 'No Session' }}</p>
-        </div>
+      <div class="flex items-center gap-3 md:gap-5">
 
-        <!-- Upload button -->
-        <button
-          type="button"
-          (click)="onUploadClick()"
-          class="group relative inline-flex items-center gap-2 overflow-hidden scroll-glass scroll-glow rounded-full border border-cyan-400/60 bg-cyan-500/20 px-3 py-2 text-xs md:text-sm font-medium text-cyan-100 shadow-lg shadow-cyan-500/30 transition duration-200 hover:border-cyan-300 hover:bg-cyan-500/30"
-        >
-          <span
-            class="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-r from-cyan-500/30 via-transparent to-indigo-500/30 opacity-0 blur-xl transition-opacity duration-300 group-hover:opacity-100"
-          ></span>
-          <span
-            class="h-6 w-6 flex items-center justify-center rounded-full bg-cyan-500/30 text-[0.7rem]"
-          >
-            <i class="fa-solid fa-cloud-arrow-up"></i>
-          </span>
-          <span>{{ selectedFileName() || 'Upload Document' }}</span>
-        </button>
+  <!-- 🔄 BULK TOGGLE (Styled Switch) -->
+  <div class="flex items-center gap-2">
+    <span class="text-[0.65rem] text-slate-400 uppercase tracking-wide">
+      Bulk
+    </span>
 
-        <!-- Hidden file input -->
-        <input
-          type="file"
-          class="hidden"
-          #fileInput
-          (change)="onFileSelected($event)"
-          accept=".pdf"
-        />
-      </div>
+    <label class="relative inline-flex items-center cursor-pointer">
+      <input
+        type="checkbox"
+        class="sr-only peer"
+        (change)="onToggleBulk()"
+      />
+      <div
+        class="w-9 h-5 bg-slate-700 rounded-full peer peer-checked:bg-cyan-500/70 transition-all duration-300 shadow-inner"
+      ></div>
+      <div
+        class="absolute left-0.5 top-0.5 h-4 w-4 bg-white rounded-full transition-all duration-300 peer-checked:translate-x-4 shadow"
+      ></div>
+    </label>
+  </div>
+
+  <!-- 📌 SESSION ID (Compact Glass Card) -->
+  <div
+    class="hidden sm:flex flex-col px-3 py-1.5 rounded-lg bg-slate-900/60 border border-white/10 backdrop-blur-md shadow-inner shadow-black/40"
+  >
+    <span class="text-[0.55rem] uppercase tracking-wide text-slate-500">
+      Session
+    </span>
+    <span class="text-[0.7rem] font-mono text-slate-200 truncate max-w-[140px]">
+      {{ activeSessionId() || 'No Session' }}
+    </span>
+  </div>
+
+  <!-- 🚀 UPLOAD BUTTON -->
+  <button
+    type="button"
+    (click)="onUploadClick()"
+    class="group relative inline-flex items-center gap-2 rounded-full border border-cyan-400/60 bg-gradient-to-r from-cyan-500/20 to-indigo-500/20 px-3.5 py-2 text-xs md:text-sm font-medium text-cyan-100 shadow-md shadow-cyan-500/20 transition-all duration-200 hover:scale-[1.03] hover:border-cyan-300 hover:shadow-cyan-400/40"
+  >
+    <!-- Glow -->
+    <span
+      class="absolute inset-0 rounded-full opacity-0 blur-lg transition-opacity duration-300 group-hover:opacity-100 bg-gradient-to-r from-cyan-500/30 to-indigo-500/30"
+    ></span>
+
+    <!-- Icon -->
+    <span
+      class="relative z-10 flex h-6 w-6 items-center justify-center rounded-full bg-cyan-500/30 text-[0.7rem]"
+    >
+      <i class="fa-solid fa-cloud-arrow-up"></i>
+    </span>
+
+    <!-- Text -->
+    <span class="relative z-10">
+      {{ selectedFileName() || (bulkMode() ? 'Upload Files' : 'Upload Document') }}
+    </span>
+  </button>
+
+  <!-- 📂 FILE INPUT -->
+  <input
+    type="file"
+    class="hidden"
+    #fileInput
+    (change)="onFileSelected($event)"
+    accept=".pdf"
+    [attr.multiple]="bulkMode() ? '' : null"
+  />
+
+</div>
     </header>
 
     <!-- MAIN SPLIT LAYOUT: constrained to remaining viewport height -->
-    <main class="flex-1 flex flex-col overflow-hidden scroll-glass scroll-glow">
+    <main class="flex-1 flex flex-col overflow-hidden">
       <div class="flex h-full max-h-full flex-col gap-4 md:flex-row">
         <!-- LEFT: PDF VIEWER PANEL -->
         <section
@@ -100,6 +136,72 @@
           <div
             class="flex items-center justify-between border-b border-white/10 bg-slate-900/60 px-3 py-2 md:px-4 md:py-3"
           >
+          @if (bulkMode()){
+  <div class="w-full flex items-center justify-between gap-4">
+
+    <!-- LEFT: TITLE BADGE -->
+    <div
+      class="inline-flex items-center gap-2 rounded-full bg-slate-900/70 px-3 py-1.5 text-[0.7rem] md:text-xs text-slate-300 border border-white/10 shadow-inner shadow-black/30"
+    >
+      <i class="fa-regular fa-file-pdf text-red-400"></i>
+      <span class="font-medium tracking-wide">
+        Bulk PDF Files
+      </span>
+    </div>
+
+    <!-- RIGHT: PROGRESS SECTION -->
+    @if (bulkMode()) {
+
+      <div class="flex-1 max-w-[280px]">
+
+        <!-- PROGRESS BAR (GLASS STYLE) -->
+        <div class="relative h-2 w-full rounded-full bg-slate-800/80 overflow-hidden border border-white/10">
+
+          <!-- subtle glow track -->
+          <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
+
+          <!-- progress fill -->
+          <div
+            class="h-full rounded-full bg-gradient-to-r from-cyan-400 via-sky-400 to-indigo-400 transition-all duration-500 ease-out shadow-[0_0_14px_rgba(34,211,238,0.6)]"
+            [style.width.%]="bulkProgress()"
+          ></div>
+        </div>
+
+        <!-- PROGRESS TEXT -->
+        <div class="mt-1.5 flex justify-between items-center text-[0.65rem] text-slate-400">
+
+          @if (isBulkProcessing()) {
+            <span class="flex items-center gap-1">
+              <span class="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+              Processing documents...
+            </span>
+
+            <span class="font-medium text-slate-300">
+              {{ bulkProgress() }}%
+            </span>
+
+          } @else if (!isBulkProcessing() && bulkFiles().length > 0) {
+
+            <span class="flex items-center gap-1 text-emerald-400">
+              <i class="fa-solid fa-circle-check text-[0.6rem]"></i>
+              Completed
+            </span>
+
+            <span class="font-medium text-emerald-400">
+              100% ✓
+            </span>
+
+          }
+
+        </div>
+
+      </div>
+
+    }
+
+  </div>
+}
+          @else{
             <div class="flex items-center gap-2">
               <div
                 class="inline-flex items-center justify-center rounded-full bg-slate-800/80 px-2 py-1 text-[0.65rem] text-slate-300 border border-white/10"
@@ -144,11 +246,114 @@
                 <i class="fa-solid fa-print text-xs"></i>
               </button>
             </div>
+          }
           </div>
 
           <!-- PDF viewer area kept within viewport -->
           <div class="flex-1 overflow-hidden scroll-glass scroll-glow px-4 py-4 md:px-6 md:py-6">
-            <div class="h-full w-full flex items-center justify-center">
+            <div class="flex-1 overflow-hidden px-3 py-3">
+
+            @if (bulkMode()) {
+
+              <div class="h-full overflow-y-auto space-y-3 p-3">
+
+                <!-- 🟡 EMPTY STATE -->
+                @if (bulkFiles().length === 0) {
+
+                  <div class="h-full flex items-center justify-center">
+                              <div
+                          (click)="onUploadClick()"
+                          (dragover)="onDragOver($event)"
+                          (dragleave)="onDragLeave($event)"
+                          (drop)="onDrop($event)"
+                          class="group relative flex flex-col items-center justify-center gap-3 cursor-pointer overflow-hidden scroll-glass scroll-glow rounded-2xl border-2 border-dashed border-cyan-400/60 bg-cyan-500/10 px-6 py-6 text-xs md:text-sm font-medium text-cyan-100 shadow-lg shadow-cyan-500/20 transition duration-200 hover:border-cyan-300 hover:bg-cyan-500/20 w-3/4"
+                          [class.border-cyan-300]="isDragging()"
+                          [class.drag-active]="isDragging()"
+                          [class.bg-cyan-500/20]="isDragging()"
+                        >
+
+                          <!-- glow effect -->
+                          <span
+                            class="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-r from-cyan-500/20 via-transparent to-indigo-500/20 opacity-0 blur-xl transition-opacity duration-300 group-hover:opacity-100"
+                          ></span>
+
+                          <!-- icon -->
+                          <div
+                            class="h-12 w-12 flex items-center justify-center rounded-full bg-cyan-500/20 text-lg"
+                          >
+                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                          </div>
+
+                          <!-- text -->
+                          <div class="text-center">
+                            <p class="text-sm font-semibold">
+                              {{ selectedFileName() || 'Drag & Drop PDF' }}
+                            </p>
+                            <p class="text-[0.65rem] text-slate-400 mt-1">
+                              or click to browse
+                            </p>
+                          </div>
+
+                        </div>
+                            </div>
+
+                }
+
+                <!-- 🟢 NORMAL CONTENT -->
+                @else {
+
+                  <!-- UNPROCESSED -->
+                  @if (bulkFiles().some(f => f.status !== 'done')) {
+                    <div class="text-xs text-slate-400 px-2">Unprocessed</div>
+
+                    @for (file of bulkFiles(); track file.name) {
+                      @if (file.status !== 'done') {
+                        <div class="px-3 py-2 text-xs text-slate-500 border border-white/10 rounded-lg opacity-60">
+                          {{ file.name }}
+                        </div>
+                      }
+                    }
+                  }
+
+                  <!-- CLASSES -->
+                  @for (cls of classKeys(); track cls) {
+
+                    <div
+                      (click)="onSelectClass(cls)"
+                      class="text-xs text-cyan-300 font-semibold px-2 py-1 cursor-pointer rounded"
+                      [class.bg-cyan-500/10]="selectedClass() === cls"
+                    >
+                      {{ cls }}
+                    </div>
+
+                    @for (file of classMap()[cls]; track file.session_id) {
+
+                      <div
+                        (click)="onSelectFile(file.session_id)"
+                        class="flex items-center justify-between px-3 py-2 rounded-lg border border-white/10 cursor-pointer"
+                        [class.bg-cyan-500/20]="selectedSessionId() === file.session_id"
+                      >
+
+                        <span class="text-xs truncate">
+                          {{ file.name }}
+                        </span>
+
+                        <i class="fa-solid fa-check text-emerald-400 text-xs"></i>
+
+                      </div>
+
+                    }
+
+                  }
+
+                }
+
+              </div>
+
+            } @else {
+
+              <!-- 🧾 EXISTING PDF VIEWER (UNCHANGED) -->
+              <div class="h-full w-full flex items-center justify-center">
               @if (selectedFileUrl()) {
                 <!-- Real PDF viewer when a file is uploaded -->
                 <div
@@ -236,6 +441,11 @@
                 </div>
               }
             </div>
+
+            }
+
+          </div>
+            
           </div>
         </section>
 
@@ -264,33 +474,68 @@
 
                 } @else {
                   <div class="flex items-start justify-between gap-3">
-                    <div>
-                  <!-- ✅ ORIGINAL CONTENT -->
-                  <div class="flex items-center gap-2 mb-2">
-                    <span class="inline-flex items-center rounded-full bg-cyan-500/15 px-2 py-0.5 text-[0.65rem] font-medium uppercase tracking-wide text-cyan-300 border border-cyan-400/40">
-                      <i class="fa-solid fa-file-invoice mr-1"></i>
-                      {{ classification()?.document_type || 'Unknown' }}
-                    </span>
 
-                    <span class="inline-flex items-center rounded-full bg-emerald-500/10 px-2 py-0.5 text-[0.65rem] font-medium text-emerald-300 border border-emerald-500/40">
-                      <i class="fa-solid fa-shield-check mr-1"></i>
-                      {{ classification()?.confidence_score * 100 || '' }}% Confidence
-                    </span>
-                  </div>
+                    <!-- LEFT CONTENT -->
+                    <div class="flex-1">
 
-                  <h2 class="text-base md:text-lg font-semibold tracking-tight mb-1">
-                    {{ classification()?.document_title || 'Document title' }}
-                  </h2>
+                      <!-- TOP ROW (BADGES + TOGGLE) -->
+                      <div class="flex items-center justify-between mb-2">
 
-                  <p class="text-xs md:text-sm text-slate-400 leading-relaxed">
-                    {{ classification()?.document_summary || 'Summary of document shows here' }}
-                  </p>
-                  </div>
-                  <div
-                class="hidden sm:flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/20 border border-emerald-400/50 text-emerald-300"
-              >
-                <i class="fa-solid fa-check text-lg"></i>
-              </div>
+                        <!-- BADGES -->
+                        <div class="flex items-center gap-2">
+                          <span class="inline-flex items-center rounded-full bg-cyan-500/15 px-2 py-0.5 text-[0.65rem] font-medium uppercase tracking-wide text-cyan-300 border border-cyan-400/40">
+                            <i class="fa-solid fa-file-invoice mr-1"></i>
+                            {{ currentClassification()?.document_type || 'Unknown' }}
+                          </span>
+
+                          <span class="inline-flex items-center rounded-full bg-emerald-500/10 px-2 py-0.5 text-[0.65rem] font-medium text-emerald-300 border border-emerald-500/40">
+                            <i class="fa-solid fa-shield-check mr-1"></i>
+                            {{ currentClassification()?.confidence_score * 100 || '' }}% Confidence
+                          </span>
+                        </div>
+
+                        <!-- 🔥 COLLAPSE BUTTON -->
+                        <button
+                          (click)="toggleCollapse()"
+                          class="flex items-center justify-center h-7 w-7 rounded-full bg-slate-800/70 text-slate-300 hover:bg-cyan-500/20 hover:text-cyan-300 border border-white/10 transition"
+                        >
+                          <i
+                            class="fa-solid transition-transform duration-300"
+                            [class.fa-chevron-up]="!isCollapsed()"
+                            [class.fa-chevron-down]="isCollapsed()"
+                          ></i>
+                        </button>
+
+                      </div>
+
+                      <!-- 🔥 COLLAPSIBLE CONTENT -->
+                      <div
+                        class="transition-all duration-300 ease-in-out overflow-hidden"
+                        [class.max-h-0]="isCollapsed()"
+                        [class.opacity-0]="isCollapsed()"
+                        [class.max-h-40]="!isCollapsed()"
+                        [class.opacity-100]="!isCollapsed()"
+                      >
+
+                        <h2 class="text-base md:text-lg font-semibold tracking-tight mb-1">
+                          {{ currentClassification()?.document_title || 'Document title' }}
+                        </h2>
+
+                        <p class="text-xs md:text-sm text-slate-400 leading-relaxed">
+                          {{ currentClassification()?.document_summary || 'Overview of document shows here' }}
+                        </p>
+
+                      </div>
+
+                    </div>
+
+                    <!-- RIGHT ICON -->
+                    <!-- <div
+                      class="hidden sm:flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/20 border border-emerald-400/50 text-emerald-300"
+                    >
+                      <i class="fa-solid fa-check text-lg"></i>
+                    </div> -->
+
                   </div>
 
                 }
@@ -325,6 +570,7 @@
                   [class.text-cyan-300]="activeTab() === 'chat'"
                   [class.text-slate-400]="activeTab() !== 'chat'"
                   [class.tab-disabled]="!sessionId()"
+                  [class.tab-disabled]="!activeSessionId()"
                   (click)="setTab('chat')"
                 >
                 <span class="flex items-center gap-1.5">
@@ -344,6 +590,7 @@
                   [class.text-cyan-300]="activeTab() === 'api'"
                   [class.text-slate-400]="activeTab() !== 'api'"
                   [class.tab-disabled]="!sessionId()"
+                  [class.tab-disabled]="!activeSessionId()"
                   (click)="setTab('api')"
                 >
                 <span class="flex items-center gap-1.5">
@@ -362,120 +609,230 @@
           <!-- TAB CONTENT AREA -->
           <div class="flex-1 overflow-hidden scroll-glass scroll-glow">
             @if (activeTab() === 'extracted') {
-              <div class="h-full overflow-hidden">
 
-  <!-- 🟢 STATE 1: Upload Button -->
-  @if (!sessionId() && !isUploading()) {
+                <div class="h-full overflow-hidden">
 
-    <div class="h-full flex items-center justify-center">
-      <div
-  (click)="onUploadClick()"
-  (dragover)="onDragOver($event)"
-  (dragleave)="onDragLeave($event)"
-  (drop)="onDrop($event)"
-  class="group relative flex flex-col items-center justify-center gap-3 cursor-pointer overflow-hidden scroll-glass scroll-glow rounded-2xl border-2 border-dashed border-cyan-400/60 bg-cyan-500/10 px-6 py-6 text-xs md:text-sm font-medium text-cyan-100 shadow-lg shadow-cyan-500/20 transition duration-200 hover:border-cyan-300 hover:bg-cyan-500/20 w-3/4"
-  [class.border-cyan-300]="isDragging()"
-  [class.drag-active]="isDragging()"
-  [class.bg-cyan-500/20]="isDragging()"
->
+                  <!-- 🟢 SINGLE MODE -->
+                  @if (!bulkMode()) {
 
-  <!-- glow effect -->
-  <span
-    class="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-r from-cyan-500/20 via-transparent to-indigo-500/20 opacity-0 blur-xl transition-opacity duration-300 group-hover:opacity-100"
-  ></span>
+                    <!-- Upload -->
+                    @if (!activeSessionId()) {
+                      <div class="h-full flex items-center justify-center">
+                              <div
+                          (click)="onUploadClick()"
+                          (dragover)="onDragOver($event)"
+                          (dragleave)="onDragLeave($event)"
+                          (drop)="onDrop($event)"
+                          class="group relative flex flex-col items-center justify-center gap-3 cursor-pointer overflow-hidden scroll-glass scroll-glow rounded-2xl border-2 border-dashed border-cyan-400/60 bg-cyan-500/10 px-6 py-6 text-xs md:text-sm font-medium text-cyan-100 shadow-lg shadow-cyan-500/20 transition duration-200 hover:border-cyan-300 hover:bg-cyan-500/20 w-3/4"
+                          [class.border-cyan-300]="isDragging()"
+                          [class.drag-active]="isDragging()"
+                          [class.bg-cyan-500/20]="isDragging()"
+                        >
 
-  <!-- icon -->
-  <div
-    class="h-12 w-12 flex items-center justify-center rounded-full bg-cyan-500/20 text-lg"
-  >
-    <i class="fa-solid fa-cloud-arrow-up"></i>
-  </div>
+                          <!-- glow effect -->
+                          <span
+                            class="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-r from-cyan-500/20 via-transparent to-indigo-500/20 opacity-0 blur-xl transition-opacity duration-300 group-hover:opacity-100"
+                          ></span>
 
-  <!-- text -->
-  <div class="text-center">
-    <p class="text-sm font-semibold">
-      {{ selectedFileName() || 'Drag & Drop PDF' }}
-    </p>
-    <p class="text-[0.65rem] text-slate-400 mt-1">
-      or click to browse
-    </p>
-  </div>
+                          <!-- icon -->
+                          <div
+                            class="h-12 w-12 flex items-center justify-center rounded-full bg-cyan-500/20 text-lg"
+                          >
+                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                          </div>
 
-</div>
-    </div>
+                          <!-- text -->
+                          <div class="text-center">
+                            <p class="text-sm font-semibold">
+                              {{ selectedFileName() || 'Drag & Drop PDF' }}
+                            </p>
+                            <p class="text-[0.65rem] text-slate-400 mt-1">
+                              or click to browse
+                            </p>
+                          </div>
 
-  }
+                        </div>
+                            </div>
 
-  <!-- 🔵 STATE 2: EVA LOADER -->
-  @else if (isUploading() || isExtracting()) {
+                    }
 
-    <div class="h-full flex flex-col items-center justify-center">
+                    <!-- Loader -->
+                    @else if (isUploading() || isExtracting()) {
+                      <div class="h-full flex flex-col items-center justify-center">
 
-  <!-- FORCE SIZE + CENTER -->
-  <div class="flex items-center justify-center w-full">
-    <div class="loader-wrapper">
-      <div class="modelViewPort">
-        <div class="eva">
-          <div class="head">
-            <div class="eyeChamber">
-              <div class="eye"></div>
-              <div class="eye"></div>
-            </div>
-          </div>
-          <div class="body">
-            <div class="hand"></div>
-            <div class="hand"></div>
-            <div class="scannerThing"></div>
-            <div class="scannerOrigin"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+                      <!-- FORCE SIZE + CENTER -->
+                      <div class="flex items-center justify-center w-full">
+                        <div class="loader-wrapper">
+                          <div class="modelViewPort">
+                            <div class="eva">
+                              <div class="head">
+                                <div class="eyeChamber">
+                                  <div class="eye"></div>
+                                  <div class="eye"></div>
+                                </div>
+                              </div>
+                              <div class="body">
+                                <div class="hand"></div>
+                                <div class="hand"></div>
+                                <div class="scannerThing"></div>
+                                <div class="scannerOrigin"></div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
 
-  <p class="text-xs text-slate-400 mt-4 text-center">
-    Extracting Key Fields...
-  </p>
+                      <p class="text-xs text-slate-400 mt-4 text-center">
+                        Extracting Key Fields...
+                      </p>
 
-</div>
+                    </div>
+                    }
 
-  }
+                    <!-- Data -->
+                    @else if (entries().length > 0) {
+                       <div class="h-full overflow-y-auto scroll-glass scroll-glow px-4 py-4 md:px-5 md:py-5">
 
-  <!-- 🟣 STATE 3: EXTRACTED DATA -->
-  @else if (entries().length > 0) {
+                      <div class="grid grid-cols-1 gap-3">
 
-    <div class="h-full overflow-y-auto scroll-glass scroll-glow px-4 py-4 md:px-5 md:py-5">
+                        @for (item of entries(); track item[0]) {
+                          <div
+                            class="rounded-xl bg-white/5 border border-white/10 px-3 py-3 md:px-4 md:py-3 shadow-sm shadow-cyan-500/5 transition hover:bg-white/10"
+                          >
+                            <p
+                              class="text-[0.7rem] md:text-xs flex justify-between items-center"
+                              [class.text-emerald-400]="item[0].toLowerCase().includes('amount')"
+                              [class.font-semibold]="item[0].toLowerCase().includes('amount')"
+                            >
+                              <span class="text-slate-400 uppercase tracking-wide text-[0.6rem] md:text-[0.7rem]">
+                                {{ item[0].replaceAll('_', ' ') }} 
+                              </span>
 
-      <div class="grid grid-cols-1 gap-3">
+                              <span class="text-slate-100 ml-4 text-right">
+                                {{ item[1] || '—' }}
+                              </span>
+                            </p>
+                          </div>
+                        }
 
-        @for (item of entries(); track item[0]) {
-          <div
-            class="rounded-xl bg-white/5 border border-white/10 px-3 py-3 md:px-4 md:py-3 shadow-sm shadow-cyan-500/5 transition hover:bg-white/10"
-          >
-            <p
-              class="text-[0.7rem] md:text-xs flex justify-between items-center"
-              [class.text-emerald-400]="item[0].toLowerCase().includes('amount')"
-              [class.font-semibold]="item[0].toLowerCase().includes('amount')"
-            >
-              <span class="text-slate-400 uppercase tracking-wide text-[0.6rem] md:text-[0.7rem]">
-                {{ item[0].replaceAll('_', ' ') }} :
-              </span>
+                      </div>
 
-              <span class="text-slate-100 text-right">
-                {{ item[1] || '—' }}
-              </span>
-            </p>
-          </div>
-        }
+                    </div>
+                    }
 
-      </div>
+                  }
 
-    </div>
+                  <!-- 🔵 BULK MODE -->
+                  @else {
 
-  }
+                    <!-- 🟡 No files uploaded -->
+                    @if (bulkFiles().length === 0) {
 
-</div>
-            } @else if (activeTab() === 'chat') {
+                      <div class="h-full flex items-center justify-center">
+                              <div
+                          (click)="onUploadClick()"
+                          (dragover)="onDragOver($event)"
+                          (dragleave)="onDragLeave($event)"
+                          (drop)="onDrop($event)"
+                          class="group relative flex flex-col items-center justify-center gap-3 cursor-pointer overflow-hidden scroll-glass scroll-glow rounded-2xl border-2 border-dashed border-cyan-400/60 bg-cyan-500/10 px-6 py-6 text-xs md:text-sm font-medium text-cyan-100 shadow-lg shadow-cyan-500/20 transition duration-200 hover:border-cyan-300 hover:bg-cyan-500/20 w-3/4"
+                          [class.border-cyan-300]="isDragging()"
+                          [class.drag-active]="isDragging()"
+                          [class.bg-cyan-500/20]="isDragging()"
+                        >
+
+                          <!-- glow effect -->
+                          <span
+                            class="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-r from-cyan-500/20 via-transparent to-indigo-500/20 opacity-0 blur-xl transition-opacity duration-300 group-hover:opacity-100"
+                          ></span>
+
+                          <!-- icon -->
+                          <div
+                            class="h-12 w-12 flex items-center justify-center rounded-full bg-cyan-500/20 text-lg"
+                          >
+                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                          </div>
+
+                          <!-- text -->
+                          <div class="text-center">
+                            <p class="text-sm font-semibold">
+                              {{ selectedFileName() || 'Drag & Drop PDF' }}
+                            </p>
+                            <p class="text-[0.65rem] text-slate-400 mt-1">
+                              or click to browse
+                            </p>
+                          </div>
+
+                        </div>
+                            </div>
+
+                    }
+
+                    <!-- 🔵 Processing -->
+                    @else if (isBulkProcessing()) {
+
+                      <div class="h-full flex flex-col items-center justify-center">
+                        <div class="loader">
+                        <div class="intern">
+                          {{ bulkProgress() }}%
+                        </div>
+
+                        <div class="external-shadow">
+                          <div class="central"></div>
+                        </div>
+                      </div>
+
+                        <p class="text-xs text-slate-400 mt-3">
+                          Processing documents... {{ bulkProgress() }}%
+                        </p>
+                      </div>
+
+                    }
+                    
+
+                    <!-- 🟣 Show selected file data -->
+                    @else {
+
+                      @if (entries().length > 0) {
+
+                        <div class="h-full overflow-y-auto px-4 py-4">
+
+                          <div class="grid grid-cols-1 gap-3">
+
+                            @for (item of entries(); track item[0]) {
+                              <div class="rounded-xl bg-white/5 border border-white/10 px-3 py-3">
+                                <p class="text-xs flex justify-between">
+                                  <span class="text-slate-400 uppercase">
+                                    {{ item[0].replaceAll('_', ' ') }}
+                                  </span>
+                                  <span class="text-slate-100">
+                                    {{ item[1] || '—' }}
+                                  </span>
+                                </p>
+                              </div>
+                            }
+
+                          </div>
+
+                        </div>
+
+                      } @else {
+
+                        <div class="h-full flex items-center justify-center">
+                          <p class="text-xs text-slate-500">
+                            Select a processed file to view data
+                          </p>
+                        </div>
+
+                      }
+
+                    }
+
+                  }
+
+                </div>
+
+              }
+             @else if (activeTab() === 'chat') {
               <div class="relative flex h-full flex-col px-4 py-3 md:px-5 md:py-4">
   <!-- Messages -->
   <div #chatContainer class="flex-1 space-y-3 overflow-y-auto scroll-glass scroll-glow pr-1">
@@ -560,37 +917,39 @@
   </div>
 
   <!-- Input -->
-  <div class="mt-3 border-t border-white/10 pt-3">
-    <div
-      class="flex items-center gap-2 rounded-full bg-slate-900/70 px-3 py-1.5 border border-white/10 shadow-inner shadow-black/40"
+  <div class="mt-2 border-t border-white/10 pt-2">
+  <div
+    class="flex items-center gap-1.5 rounded-full bg-slate-900/70 px-2.5 py-1 border border-white/10 shadow-inner shadow-black/40"
+  >
+    <i
+      class="fa-solid fa-magnifying-glass-chart text-slate-500 text-[0.65rem]"
+    ></i>
+
+    <!-- Compact Input -->
+    <input
+      [ngModel]="chatInput()"
+      (ngModelChange)="chatInput.set($event)"
+      (keyup.enter)="sendMessage()"
+      type="text"
+      placeholder="Ask a question..."
+      class="flex-1 bg-transparent text-[0.7rem] md:text-xs text-slate-100 placeholder:text-slate-500 outline-none border-none"
+    />
+
+    <!-- Compact Button -->
+    <button
+      type="button"
+      (click)="sendMessage()"
+      class="flex h-7 w-7 items-center justify-center rounded-full bg-cyan-500 text-slate-900 hover:bg-cyan-400 transition shadow-md shadow-cyan-500/30"
     >
-      <i
-        class="fa-solid fa-magnifying-glass-chart text-slate-500 text-xs md:text-sm"
-      ></i>
-
-      <!-- FIXED ngModel -->
-      <input
-        [ngModel]="chatInput()"
-        (ngModelChange)="chatInput.set($event)"
-        (keyup.enter)="sendMessage()"
-        type="text"
-        placeholder="Ask a question..."
-        class="flex-1 bg-transparent text-xs md:text-sm text-slate-100 placeholder:text-slate-500 outline-none border-none"
-      />
-
-      <button
-        type="button"
-        (click)="sendMessage()"
-        class="flex h-8 w-8 items-center justify-center rounded-full bg-cyan-500 text-slate-900 hover:bg-cyan-400 transition shadow-lg shadow-cyan-500/40"
-      >
-        <i class="fa-solid fa-paper-plane text-xs"></i>
-      </button>
-    </div>
-
-    <p class="mt-1 text-[0.65rem] text-slate-500">
-      AI answers are grounded strictly in the current session document.
-    </p>
+      <i class="fa-solid fa-paper-plane text-[0.6rem]"></i>
+    </button>
   </div>
+
+  <!-- Compact helper text -->
+  <p class="mt-0.5 text-[0.6rem] text-slate-500">
+    AI answers are grounded strictly in the current session document.
+  </p>
+</div>
 </div>
             } @else if (activeTab() === 'api') {
               <div class="h-full overflow-y-auto scroll-glass scroll-glow px-4 py-4 md:px-5 md:py-5 space-y-4">
@@ -674,20 +1033,20 @@
   <pre
     class="max-h-60 overflow-auto scroll-glass scroll-glow text-xs md:text-[0.75rem] text-slate-200 font-mono leading-relaxed"
   >
-  {{ '{' }} "session_id": "{{ sessionId() || 'No Session' }}" {{ '}' }}
+  {{ '{' }} "session_id": "{{ activeSessionId() || 'No Session' }}" {{ '}' }}
   </pre>
 </div>
                 <div
   class="rounded-xl bg-black/50 border border-slate-800 px-3 py-3 md:px-4 md:py-4 shadow-inner shadow-black/60"
 >
   <div class="mb-2 flex items-center justify-between">
-    <span class="text-xs font-medium text-slate-200">JSON Payload</span>
+    <span class="text-xs font-medium text-slate-200">JSON Response</span>
     <span class="text-[0.65rem] text-slate-500 font-mono">
       application/json
     </span>
   </div>
   <div class="mb-2 flex items-center justify-between">
-    <span class="text-xs font-medium text-slate-200">Response</span>
+    <span class="text-xs font-medium text-slate-200"></span>
 
     <button
   (click)="copyResponse()"
@@ -709,24 +1068,41 @@
 </button>
   </div>
   <pre
-    class="max-h-60 overflow-auto scroll-glass scroll-glow text-xs md:text-[0.75rem] text-slate-200 font-mono leading-relaxed"
-  >
-@if (extractedData()) {
-@for (item of entries(); track item[0]) {
+  class="max-h-60 overflow-auto scroll-glass scroll-glow text-xs md:text-[0.75rem] text-slate-200 font-mono leading-relaxed"
+>
+@if (entries().length > 0) {
+  @for (item of entries(); track item[0]) {
 {{ item[0] }} : "{{ item[1] }}"
+  }
 }
-}
-  </pre>
+</pre>
 </div>
 
                 <!-- Export Button -->
                 <button
+                (click)="downloadExcel()"
                   type="button"
                   class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-cyan-500 text-slate-950 px-4 py-2.5 md:py-3 text-sm font-semibold tracking-tight shadow-lg shadow-cyan-500/40 hover:bg-cyan-400 transition"
                 >
                   <i class="fa-solid fa-file-excel text-base"></i>
                   <span>Download to Excel</span>
                 </button>
+                <!-- <button
+                  (click)="downloadAllExcel()"
+                  [disabled]="isBulkProcessing() || !bulkFiles().length"
+                  class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-500 text-slate-950 px-4 py-2.5 text-sm font-semibold shadow-lg shadow-emerald-500/40 hover:bg-emerald-400 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <i class="fa-solid fa-layer-group text-base"></i>
+                  <span>Export All Excel</span>
+                </button> -->
+                <button
+                    (click)="downloadClassExcel()"
+                    [disabled]="isBulkProcessing() || !bulkFiles().length"
+                  class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-500 text-slate-950 px-4 py-2.5 text-sm font-semibold shadow-lg shadow-emerald-500/40 hover:bg-emerald-400 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                  <i class="fa-solid fa-layer-group text-base"></i>
+                    <span>Export {{ selectedClass() || 'Class' }} Data </span>
+                  </button>
               </div>
             }
           </div>

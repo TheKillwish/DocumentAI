@@ -19,6 +19,10 @@ from classifier import classify_document
 from extractor import extract_fields
 import certifi
 import io
+import pytesseract
+
+import asyncio
+
 os.environ['SSL_CERT_FILE']=certifi.where()
 
 # For PDF text extraction
@@ -46,29 +50,250 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 def extract_text_from_pdf(file_path):
     try:
-        # Try extracting text directly
-        reader = PdfReader(file_path)
-        text = ''
-        for page in reader.pages:
-            page_text = page.extract_text()
-            if page_text:
-                text += page_text
-        if text.strip():  # Regular PDF with extractable text
-            return text, "text"
-        # Fallback to OCR
-        return None, "image"
-    except Exception:
-        return None, "image"
+        import fitz  # PyMuPDF
+        import base64
+        from openai import OpenAI
+        from concurrent.futures import ThreadPoolExecutor, as_completed
 
-def ocr_text_from_pdf(file_path):
-    # Convert PDF to images and apply OCR
-    images = convert_from_path(file_path)
-    text = ''
-    for img in images:
-        text += pytesseract.image_to_string(img)
-    return text
+        client = OpenAI()
+        doc = fitz.open(file_path)
+
+        # -------------------------
+        # 🧠 LOCAL MERGE FUNCTION
+        # -------------------------
+        def merge_locally(text, visual):
+            combined = (text or "").strip() + "\n\n" + (visual or "").strip()
+
+            lines = combined.splitlines()
+            seen = set()
+            result = []
+
+            for line in lines:
+                clean = line.strip()
+                key = clean.lower()
+                if clean and key not in seen:
+                    seen.add(key)
+                    result.append(clean)
+
+            return "\n".join(result)
+
+        # -------------------------
+        # 🚀 PAGE PROCESSOR
+        # -------------------------
+        def process_page(page_number):
+            page = doc[page_number]
+
+            # TEXT extraction
+            text_content = page.get_text("text") or ""
+
+            # IMAGE detection
+            image_list = page.get_images(full=True)
+            has_images = len(image_list) > 0
+
+            visual_content = ""
+
+            # 🔥 SMART OCR CONDITION (cost + speed optimized)
+            if has_images and len(text_content.strip()) < 800:
+
+                pix = page.get_pixmap(matrix=fitz.Matrix(1.2, 1.2))
+                img_bytes = pix.tobytes("png")
+
+                img_base64 = base64.b64encode(img_bytes).decode()
+
+                try:
+                    response = client.responses.create(
+                        model="gpt-4o",
+                        input=[
+                            {
+                                "role": "user",
+                                "content": [
+                                    {
+                                        "type": "input_text",
+                                        "text": """
+Extract meaningful structured information from this document image.
+
+Focus on:
+- tables (convert to readable format)
+- charts/graphs (summarize insights)
+- scanned text
+- important numbers
+
+Do NOT repeat normal paragraph text.
+Keep output clean and structured.
+"""
+                                    },
+                                    {
+                                        "type": "input_image",
+                                        "image_url": f"data:image/png;base64,{img_base64}"
+                                    }
+                                ]
+                            }
+                        ],
+                        max_output_tokens=1200
+                    )
+
+                    visual_content = response.output_text or ""
+
+                except Exception as e:
+                    print(f"OCR ERROR (page {page_number}):", str(e))
+
+            # 🔥 MERGE
+            return merge_locally(text_content, visual_content)
+
+        # -------------------------
+        # ⚡ PARALLEL EXECUTION
+        # -------------------------
+        final_text = ""
+        results = {}
+
+        with ThreadPoolExecutor(max_workers=3) as executor:
+            futures = {
+                executor.submit(process_page, i): i
+                for i in range(len(doc))
+            }
+
+            for future in as_completed(futures):
+                page_number = futures[future]
+                try:
+                    results[page_number] = future.result()
+                except Exception as e:
+                    print(f"PAGE ERROR {page_number}:", str(e))
+                    results[page_number] = ""
+
+        # -------------------------
+        # 📄 ORDERED OUTPUT
+        # -------------------------
+        for i in range(len(doc)):
+            final_text += f"\n\n--- PAGE {i+1} ---\n\n"
+            final_text += results.get(i, "")
+
+        return final_text.strip()
+
+    except Exception as e:
+        print("PDF EXTRACTION ERROR:", str(e))
+        return ""
+# def extract_text_from_pdf(file_path):
+#     try:
+#         import fitz  # PyMuPDF
+#         import base64
+#         from openai import OpenAI
+
+#         client = OpenAI()
+#         doc = fitz.open(file_path)
+
+#         final_text = ""
+
+#         for page_number, page in enumerate(doc):
+
+#             # -------------------------
+#             # 🧾 1. Extract TEXT layer
+#             # -------------------------
+#             text_content = page.get_text("text") or ""
+
+#             # -------------------------
+#             # 🖼️ 2. Detect images
+#             # -------------------------
+#             image_list = page.get_images(full=True)
+#             has_images = len(image_list) > 0
+
+#             visual_content = ""
+
+#             # -------------------------
+#             # 🤖 3. AI Vision for visuals
+#             # -------------------------
+#             if has_images:
+#                 pix = page.get_pixmap(matrix=fitz.Matrix(2, 2))
+#                 img_bytes = pix.tobytes("png")
+#                 img_base64 = base64.b64encode(img_bytes).decode()
+
+#                 response = client.responses.create(
+#                     model="gpt-4o",
+#                     input=[
+#                         {
+#                             "role": "user",
+#                             "content": [
+#                                 {
+#                                     "type": "input_text",
+#                                     "text": """
+# You are analyzing a document page.
+
+# Extract ONLY meaningful structured information from visual elements such as:
+# - tables
+# - charts/graphs (summarize key insights)
+# - scanned sections
+# - logos, stamps (if relevant)
+
+# Rules:
+# - Do NOT repeat plain paragraph text already visible
+# - Convert tables into readable structured format
+# - Summarize graphs into key insights (e.g. trends, totals)
+# - Keep output clean and human-readable
+# """
+#                                 },
+#                                 {
+#                                     "type": "input_image",
+#                                     "image_url": f"data:image/png;base64,{img_base64}"
+#                                 }
+#                             ]
+#                         }
+#                     ],
+#                     max_output_tokens=1500
+#                 )
+
+#                 visual_content = response.output_text or ""
+
+#             # -------------------------
+#             # 🧠 4. SMART MERGE USING AI
+#             # -------------------------
+#             merge_response = client.responses.create(
+#                 model="gpt-4o",
+#                 input=f"""
+# You are given two sources from the same document page:
+
+# 1. Extracted text:
+# {text_content}
+
+# 2. Visual analysis (tables, charts, OCR):
+# {visual_content}
+
+# Task:
+# - Combine both into ONE clean, structured output
+# - Remove duplicates
+# - Preserve meaning
+# - Keep important numbers and facts
+# - Format tables clearly
+# - Keep it concise but complete
+
+# Output clean readable content only.
+# """,
+#                 max_output_tokens=1500
+#             )
+
+#             page_output = merge_response.output_text or ""
+
+#             final_text += f"\n\n--- PAGE {page_number + 1} ---\n\n"
+#             final_text += page_output.strip()
+
+#         return final_text.strip()
+
+#     except Exception as e:
+#         print("PDF EXTRACTION ERROR:", str(e))
+#         return ""
+def deduplicate_text(text):
+    lines = text.splitlines()
+    seen = set()
+    unique_lines = []
+
+    for line in lines:
+        clean = line.strip()
+        if clean and clean.lower() not in seen:
+            seen.add(clean.lower())
+            unique_lines.append(clean)
+
+    return "\n".join(unique_lines)
 
 # Health Check API
 @app.get("/")
@@ -112,17 +337,9 @@ async def upload_pdf(file: UploadFile = File(...)):
         f.write(content)
 
     # Try simple text extraction first
-    raw_text, nature = extract_text_from_pdf(save_path)
-
-    if nature == "text" and raw_text and raw_text.strip():
-        text = raw_text
-        extraction_method = "standard"
-    else:
-        # Fallback to OCR
-        text = ocr_text_from_pdf(save_path)
-        extraction_method = "ocr"
-        if not text or not text.strip():
-            raise HTTPException(status_code=422, detail="Could not extract usable text from PDF.")
+    text= extract_text_from_pdf(save_path)
+    if not text or not text.strip():
+        raise HTTPException(status_code=422, detail="Could not extract usable text from PDF.")
 
     # Classify document
     classification_json = classify_document(text)
