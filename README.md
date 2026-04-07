@@ -67,42 +67,58 @@ README.md
 
 <p align="center"><b>🏠 Dashboard UI Overview</b></p>
 <!-- Add screenshot -->
+<img width="951" height="498" alt="image" src="https://github.com/user-attachments/assets/99622cc3-ca07-4357-afd6-2812ea2f3028" />
+
 
 <p align="center"><b>📤 Single File Upload Flow</b></p>
 <!-- Add screenshot -->
+<img width="946" height="497" alt="image" src="https://github.com/user-attachments/assets/7d9742f9-ce4f-46e0-85e6-734c98b4c9f1" />
+<img width="950" height="495" alt="image" src="https://github.com/user-attachments/assets/d8269a36-41c5-41cb-8379-8226fa24efb9" />
+
 
 <p align="center"><b>📦 Bulk Upload & Processing</b></p>
 <!-- Add screenshot -->
+<img width="943" height="467" alt="image" src="https://github.com/user-attachments/assets/c6e0c987-ea9c-4fe2-915e-c6698624e1e8" />
+
 
 <p align="center"><b>📊 Real-time Progress Tracking</b></p>
+<img width="951" height="488" alt="image" src="https://github.com/user-attachments/assets/67e8f13f-3a09-4c66-9397-650376105087" />
+
 <!-- Add screenshot -->
 
 <p align="center"><b>🧠 Document Classification Result</b></p>
 <!-- Add screenshot -->
+<img width="521" height="126" alt="image" src="https://github.com/user-attachments/assets/415c82d2-47cf-4fdc-8c48-6f1ed7199f84" />
+
+
 
 <p align="center"><b>📄 Extracted Structured Data View</b></p>
 <!-- Add screenshot -->
+<img width="536" height="373" alt="image" src="https://github.com/user-attachments/assets/fc6cb832-7cfd-4705-973b-60c2c79ed691" />
+
 
 <p align="center"><b>🗂️ Class-Based Document Grouping</b></p>
 <!-- Add screenshot -->
+<img width="341" height="329" alt="image" src="https://github.com/user-attachments/assets/93baff48-506a-4f35-ac73-b6355a341712" />
 
 <p align="center"><b>📑 Multi-Document Navigation (Left Panel)</b></p>
 <!-- Add screenshot -->
+<img width="947" height="482" alt="image" src="https://github.com/user-attachments/assets/b22288f5-8730-4ee2-9397-f30e5979372d" />
+
 
 <p align="center"><b>💬 Chat with Document</b></p>
 <!-- Add screenshot -->
+<img width="947" height="497" alt="image" src="https://github.com/user-attachments/assets/eff0443a-43ec-4910-9d72-0a22e473407e" />
+
 
 <p align="center"><b>🔗 API & JSON Response Panel</b></p>
 <!-- Add screenshot -->
+<img width="514" height="341" alt="image" src="https://github.com/user-attachments/assets/2e7a4fec-5703-42ca-a5c7-f6a573408f4e" />
 
-<p align="center"><b>📥 Export Single File (CSV)</b></p>
-<!-- Add screenshot -->
 
-<p align="center"><b>📤 Export All Files (Bulk CSV)</b></p>
+<p align="center"><b>📥 Export Single File (CSV) / by Document Class </b></p>
 <!-- Add screenshot -->
-
-<p align="center"><b>📊 Export by Document Class</b></p>
-<!-- Add screenshot -->
+<img width="519" height="398" alt="image" src="https://github.com/user-attachments/assets/aadbebe1-e542-4bc0-a1a8-5ecf9e7175cd" />
 
 <hr/>
 
