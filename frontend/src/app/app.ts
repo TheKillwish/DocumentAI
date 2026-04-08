@@ -137,6 +137,7 @@ isBulkProcessing = signal(false);
 }
 async processBulk() {
   this.isLoading.set(true);
+  this.isExtracting.set(true);
 
   const files = [...this.bulkFiles()];
   const batchSize = 1;
@@ -153,6 +154,7 @@ async processBulk() {
       batch.map(async (item, indexInBatch) => {
         const globalIndex = i + indexInBatch;
 
+        // 🔄 STEP 1: MARK FILE AS PROCESSING (ONLY SOURCE OF TRUTH)
         files[globalIndex].status = 'processing';
         this.bulkFiles.set([...files]);
 
@@ -184,54 +186,72 @@ async processBulk() {
 
           const extracted = extractRes.extracted_data;
 
+          // ================================
           // ✅ STORE DATA (MAIN SOURCE)
-          const map = { ...this.sessionDataMap() };
-          map[sessionId] = {
+          // ================================
+          const sessionMap = { ...this.sessionDataMap() };
+
+          sessionMap[sessionId] = {
             classification,
             data: extracted,
             fileName: item.file.name
           };
-          this.sessionDataMap.set(map);
 
-          // ✅ CLASS MAP (ONLY UI)
+          this.sessionDataMap.set(sessionMap);
+
+          // ================================
+          // ✅ ADD TO CLASS MAP (ONLY WHEN DONE)
+          // ================================
           const docType = classification?.document_type || 'Others';
-          const classMap = { ...this.classMap() };
+          const updatedClassMap = { ...this.classMap() };
 
-          if (!classMap[docType]) classMap[docType] = [];
+          if (!updatedClassMap[docType]) {
+            updatedClassMap[docType] = [];
+          }
 
-          classMap[docType].push({
+          updatedClassMap[docType].push({
             session_id: sessionId,
             name: item.file.name,
             status: 'done'
           });
 
-          this.classMap.set(classMap);
+          this.classMap.set(updatedClassMap);
 
-          // ✅ UPDATE FILE STATUS
+          // ================================
+          // ✅ UPDATE BULK FILE STATE
+          // ================================
           files[globalIndex].status = 'done';
           files[globalIndex].session_id = sessionId;
+
           this.bulkFiles.set([...files]);
 
-          // 🔥 FIRST FILE AUTO SELECT
+          // ================================
+          // 🔥 AUTO SELECT FIRST FILE
+          // ================================
           if (!this.selectedSessionId()) {
             this.onSelectFile(sessionId);
           }
 
         } catch (err) {
           console.error('Bulk error:', err);
+
           files[globalIndex].status = 'pending';
+          this.bulkFiles.set([...files]);
         }
 
         processed++;
-        this.bulkProgress.set(Math.floor((processed / files.length) * 100));
-        this.isLoading.set(false);  
+
+        this.bulkProgress.set(
+          Math.floor((processed / files.length) * 100)
+        );
+
+        this.isLoading.set(false);
+        this.isExtracting.set(false);
+        
       })
     );
-    
-    
   }
   this.isBulkProcessing.set(false);
-
 }
 classKeys() {
   return Object.keys(this.classMap() || {});
