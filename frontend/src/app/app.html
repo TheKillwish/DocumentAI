@@ -1135,7 +1135,7 @@
                 </button> -->
                 <button
                     (click)="downloadClassExcel()"
-                    [disabled]="isBulkProcessing() || !bulkFiles().length"
+                    [disabled]="isBulkProcessing() || !bulkFiles().length || !selectedClass() "
                   class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-500 text-slate-950 px-4 py-2.5 text-sm font-semibold shadow-lg shadow-emerald-500/40 hover:bg-emerald-400 transition disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                   <i class="fa-solid fa-layer-group text-base"></i>
